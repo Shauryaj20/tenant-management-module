@@ -11,11 +11,13 @@ app.use(express.json());
 
 // Routes
 const authRoutes = require('./src/routes/authRoutes');
-const propertyRoutes = require('./src/routes/propertyRoutes'); // 1. Import it
+const propertyRoutes = require('./src/routes/propertyRoutes');
+const unitRoutes = require('./src/routes/unitRoutes'); 
 
 // Mount Routes
 app.use('/auth', authRoutes);
-app.use('/properties', propertyRoutes); // 2. Mount it
+app.use('/properties', propertyRoutes); 
+app.use('/units', unitRoutes); 
 
 // Basic Route for testing
 app.get('/', (req, res) => {
