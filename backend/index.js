@@ -13,11 +13,13 @@ app.use(express.json());
 const authRoutes = require('./src/routes/authRoutes');
 const propertyRoutes = require('./src/routes/propertyRoutes');
 const unitRoutes = require('./src/routes/unitRoutes'); 
+const tenantRoutes = require('./src/routes/tenantRoutes'); 
 
 // Mount Routes
 app.use('/auth', authRoutes);
 app.use('/properties', propertyRoutes); 
 app.use('/units', unitRoutes); 
+app.use('/tenants', tenantRoutes); 
 
 // Basic Route for testing
 app.get('/', (req, res) => {
