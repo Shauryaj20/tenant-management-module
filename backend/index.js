@@ -14,12 +14,14 @@ const authRoutes = require('./src/routes/authRoutes');
 const propertyRoutes = require('./src/routes/propertyRoutes');
 const unitRoutes = require('./src/routes/unitRoutes'); 
 const tenantRoutes = require('./src/routes/tenantRoutes'); 
+const tenancyRoutes = require('./src/routes/tenancyRoutes');
 
 // Mount Routes
 app.use('/auth', authRoutes);
 app.use('/properties', propertyRoutes); 
 app.use('/units', unitRoutes); 
 app.use('/tenants', tenantRoutes); 
+app.use('/tenancies', tenancyRoutes); 
 
 // Basic Route for testing
 app.get('/', (req, res) => {
