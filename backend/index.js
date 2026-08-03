@@ -15,6 +15,7 @@ const propertyRoutes = require('./src/routes/propertyRoutes');
 const unitRoutes = require('./src/routes/unitRoutes'); 
 const tenantRoutes = require('./src/routes/tenantRoutes'); 
 const tenancyRoutes = require('./src/routes/tenancyRoutes');
+const dashboardRoutes = require('./src/routes/dashboardRoutes');
 
 // Mount Routes
 app.use('/auth', authRoutes);
@@ -22,6 +23,7 @@ app.use('/properties', propertyRoutes);
 app.use('/units', unitRoutes); 
 app.use('/tenants', tenantRoutes); 
 app.use('/tenancies', tenancyRoutes); 
+app.use('/dashboard', dashboardRoutes);
 
 // Basic Route for testing
 app.get('/', (req, res) => {
