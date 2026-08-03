@@ -16,6 +16,7 @@ const unitRoutes = require('./src/routes/unitRoutes');
 const tenantRoutes = require('./src/routes/tenantRoutes'); 
 const tenancyRoutes = require('./src/routes/tenancyRoutes');
 const dashboardRoutes = require('./src/routes/dashboardRoutes');
+const uploadRoutes = require('./src/routes/uploadRoutes');
 
 // Mount Routes
 app.use('/auth', authRoutes);
@@ -24,6 +25,7 @@ app.use('/units', unitRoutes);
 app.use('/tenants', tenantRoutes); 
 app.use('/tenancies', tenancyRoutes); 
 app.use('/dashboard', dashboardRoutes);
+app.use('/upload', uploadRoutes);
 
 // Basic Route for testing
 app.get('/', (req, res) => {
