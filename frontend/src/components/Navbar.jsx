@@ -19,6 +19,7 @@ const Navbar = () => {
         <Link to="/dashboard" style={{ color: 'white', textDecoration: 'none' }}>Dashboard</Link>
         <Link to="/properties" style={{ color: 'white', textDecoration: 'none' }}>Properties</Link>
         <Link to="/units" style={{ color: 'white', textDecoration: 'none' }}>Units</Link> 
+        <Link to="/tenants" style={{ color: 'white', textDecoration: 'none' }}>Tenants</Link>
         <span style={{ fontStyle: 'italic' }}>Welcome, {user?.name || 'User'}</span>
         
         <button 

@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Signup from './pages/Signup';
 import Properties from './pages/Properties';
 import Units from './pages/Units';
+import Tenants from './pages/Tenants';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/properties" element={<Properties />} />
         <Route path="/units" element={<Units />} />
+        <Route path="/tenants" element={<Tenants />} />
       </Routes>
     </BrowserRouter>
   );
