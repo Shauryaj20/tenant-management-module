@@ -2,17 +2,16 @@ const Property = require('../models/Property');
 
 exports.createProperty = async (req, res) => {
   try {
-    const { name, address } = req.body;
+    const { name, address, type } = req.body;
 
-    // 1. Validate input
     if (!name || !address) {
       return res.status(400).json({ message: 'Name and address are required' });
     }
 
-    // 2. Create property locked to the user's organization
     const property = new Property({
       name,
       address,
+      type,
       organizationId: req.user.organizationId
     });
 
@@ -26,7 +25,6 @@ exports.createProperty = async (req, res) => {
 
 exports.getProperties = async (req, res) => {
   try {
-    // 3. Fetch ONLY properties that match the logged-in user's organization
     const properties = await Property.find({ organizationId: req.user.organizationId });
     res.status(200).json(properties);
   } catch (error) {
