@@ -50,8 +50,8 @@ const Properties = () => {
             <input type="text" name="name" placeholder="Property Name (e.g., Sunset Apartments)" value={formData.name} onChange={handleChange} required style={{ padding: '8px', flex: 1 }} />
             <input type="text" name="address" placeholder="Property Address" value={formData.address} onChange={handleChange} required style={{ padding: '8px', flex: 1 }} />
             <select name="type" value={formData.type} onChange={handleChange} style={{ padding: '8px' }}>
-              <option value="residential">Residential</option>
-              <option value="commercial">Commercial</option>
+              <option value="residential"> Residential </option>
+              <option value="commercial"> Commercial </option>
             </select>
             <button type="submit" style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
               Add Property
