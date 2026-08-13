@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const app = express();
 
@@ -26,7 +27,7 @@ app.use('/tenants', tenantRoutes);
 app.use('/tenancies', tenancyRoutes); 
 app.use('/dashboard', dashboardRoutes);
 app.use('/upload', uploadRoutes);
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); 
 // Basic Route for testing
 app.get('/', (req, res) => {
   res.send('Tenant Management API is running...');
