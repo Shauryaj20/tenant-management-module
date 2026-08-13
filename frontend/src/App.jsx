@@ -5,6 +5,7 @@ import Signup from './pages/Signup';
 import Properties from './pages/Properties';
 import Units from './pages/Units';
 import Tenants from './pages/Tenants';
+import Tenancies from './pages/Tenancies';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/properties" element={<Properties />} />
         <Route path="/units" element={<Units />} />
         <Route path="/tenants" element={<Tenants />} />
+        <Route path="/tenancies" element={<Tenancies />} />
       </Routes>
     </BrowserRouter>
   );
