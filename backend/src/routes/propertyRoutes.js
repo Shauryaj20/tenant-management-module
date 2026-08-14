@@ -9,5 +9,5 @@ router.use(authMiddleware);
 // Define endpoints
 router.post('/', propertyController.createProperty); // POST /properties
 router.get('/', propertyController.getProperties);   // GET /properties
-
+router.delete('/:id', authMiddleware, propertyController.deleteProperty); //DELETE /properties
 module.exports = router;

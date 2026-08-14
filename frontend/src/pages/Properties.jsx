@@ -35,6 +35,17 @@ const Properties = () => {
       setError(err.response?.data?.message || 'Error adding property');
     }
   };
+  const handleDelete = async (id) => {
+    // Add a quick confirmation popup so users don't delete by accident
+    if (!window.confirm('Are you sure you want to delete this property?')) return;
+    
+    try {
+      await api.delete(`/properties/${id}`);
+      fetchProperties(); // Refresh the list instantly
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error deleting property');
+    }
+  };
 
   return (
     <div style={{ backgroundColor: '#f4f6f8', minHeight: '100vh' }}>
@@ -68,9 +79,14 @@ const Properties = () => {
                   <strong>{prop.name}</strong>
                   <div style={{ fontSize: '14px', color: '#7f8c8d', marginTop: '5px' }}>{prop.address}</div>
                 </div>
-                <span style={{ padding: '4px 8px', backgroundColor: '#e8f4f8', color: '#3498db', borderRadius: '4px', fontSize: '12px', height: 'fit-content' }}>
-                  {prop.type ? prop.type.toUpperCase() : 'RESIDENTIAL'}
-                </span>
+                <div>
+                  <span style={{ padding: '4px 8px', backgroundColor: '#e8f4f8', color: '#3498db', borderRadius: '4px', fontSize: '12px', height: 'fit-content' }}>
+                    {prop.type ? prop.type.toUpperCase() : 'RESIDENTIAL'}
+                  </span>
+                  <button onClick={() => handleDelete(prop._id)} style={{ marginLeft: '10px', padding: '4px 8px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
             {properties.length === 0 && <p style={{ color: '#7f8c8d' }}>No properties found. Add one above!</p>}

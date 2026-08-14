@@ -32,3 +32,24 @@ exports.getProperties = async (req, res) => {
     res.status(500).json({ message: 'Server error fetching properties' });
   }
 };
+
+exports.deleteProperty = async (req, res) => {
+  try {
+    const propertyId = req.params.id;
+    
+    // Find the property by ID and Organization, then delete it
+    const deletedProperty = await Property.findOneAndDelete({ 
+      _id: propertyId, 
+      organizationId: req.user.organizationId 
+    });
+
+    if (!deletedProperty) {
+      return res.status(404).json({ message: 'Property not found or unauthorized' });
+    }
+
+    res.status(200).json({ message: 'Property deleted successfully' });
+  } catch (error) {
+    console.error('Delete Property Error:', error);
+    res.status(500).json({ message: 'Server error deleting property' });
+  }
+};
