@@ -1,4 +1,6 @@
 const Property = require('../models/Property');
+const Unit = require('../models/Unit');
+const Tenancy = require('../models/Tenancy');
 
 exports.createProperty = async (req, res) => {
   try {
@@ -36,20 +38,18 @@ exports.getProperties = async (req, res) => {
 exports.deleteProperty = async (req, res) => {
   try {
     const propertyId = req.params.id;
+    const deletedProperty = await Property.findOneAndDelete({ _id: propertyId, organizationId: req.user.organizationId });
     
-    // Find the property by ID and Organization, then delete it
-    const deletedProperty = await Property.findOneAndDelete({ 
-      _id: propertyId, 
-      organizationId: req.user.organizationId 
-    });
+    if (!deletedProperty) return res.status(404).json({ message: 'Property not found' });
 
-    if (!deletedProperty) {
-      return res.status(404).json({ message: 'Property not found or unauthorized' });
-    }
+    const units = await Unit.find({ propertyId: propertyId });
+    const unitIds = units.map(unit => unit._id);
 
-    res.status(200).json({ message: 'Property deleted successfully' });
+    await Tenancy.deleteMany({ unitId: { $in: unitIds } });
+    await Unit.deleteMany({ propertyId: propertyId });
+
+    res.status(200).json({ message: 'Property, associated units, and tenancies deleted successfully' });
   } catch (error) {
-    console.error('Delete Property Error:', error);
     res.status(500).json({ message: 'Server error deleting property' });
   }
 };

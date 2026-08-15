@@ -45,6 +45,18 @@ const Units = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this unit?\n\nWARNING: This will also permanently delete any Active Leases tied to this unit!"
+    );
+    if (!isConfirmed) return;
+    try {
+      await api.delete(`/units/${id}`);
+      fetchData(); 
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error deleting unit');
+    }
+  };
   return (
     <div style={{ backgroundColor: '#f4f6f8', minHeight: '100vh' }}>
       <Navbar />
@@ -87,9 +99,14 @@ const Units = () => {
                     Property: {unit.propertyId ? unit.propertyId.name : 'Unknown Property'}
                   </div>
                 </div>
-                <span style={{ fontWeight: 'bold', color: '#2ecc71' }}>
-                  ${unit.rentAmount}/mo
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontWeight: 'bold', color: '#2ecc71' }}>
+                    ${unit.rentAmount}/mo
+                  </span>
+                  <button onClick={() => handleDelete(unit._id)} style={{ padding: '4px 8px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
             {units.length === 0 && <p style={{ color: '#7f8c8d' }}>No units found. Add one above!</p>}

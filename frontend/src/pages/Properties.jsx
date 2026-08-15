@@ -36,12 +36,13 @@ const Properties = () => {
     }
   };
   const handleDelete = async (id) => {
-    // Add a quick confirmation popup so users don't delete by accident
-    if (!window.confirm('Are you sure you want to delete this property?')) return;
-    
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this property?\n\nWARNING: This will permanently delete ALL Units and Active Leases associated with this property!"
+    );
+    if (!isConfirmed) return;
     try {
       await api.delete(`/properties/${id}`);
-      fetchProperties(); // Refresh the list instantly
+      fetchProperties(); 
     } catch (err) {
       setError(err.response?.data?.message || 'Error deleting property');
     }

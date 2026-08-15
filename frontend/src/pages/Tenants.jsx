@@ -65,6 +65,19 @@ const Tenants = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this tenant?\n\nWARNING: This will permanently delete their Active Leases and revoke their unit access!"
+    );
+    if (!isConfirmed) return;
+    try {
+      await api.delete(`/tenants/${id}`);
+      fetchTenants(); 
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error deleting tenant');
+    }
+  };
+
   return (
     <div style={{ backgroundColor: '#f4f6f8', minHeight: '100vh' }}>
       <Navbar />
@@ -113,6 +126,9 @@ const Tenants = () => {
                 ) : (
                   <span style={{ fontSize: '13px', color: '#bdc3c7' }}>No Document</span>
                 )}
+                <button onClick={() => handleDelete(tenant._id)} style={{ padding: '4px 8px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                  Delete
+                </button>
               </li>
             ))}
             {tenants.length === 0 && <p style={{ color: '#7f8c8d' }}>No tenants found. Add one above!</p>}

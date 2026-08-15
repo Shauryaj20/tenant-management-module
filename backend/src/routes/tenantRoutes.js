@@ -8,5 +8,6 @@ router.use(authMiddleware);
 
 router.post('/', tenantController.createTenant); // POST /tenants
 router.get('/', tenantController.getTenants);    // GET /tenants
+router.delete('/:id', tenantController.deleteTenant);
 
 module.exports = router;

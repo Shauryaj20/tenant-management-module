@@ -50,6 +50,16 @@ const Tenancies = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    const isConfirmed = window.confirm("Are you sure you want to end and delete this active lease?");
+    if (!isConfirmed) return;
+    try {
+      await api.delete(`/tenancies/${id}`);
+      fetchData(); 
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error deleting tenancy');
+    }
+  };
   return (
     <div style={{ backgroundColor: '#f4f6f8', minHeight: '100vh' }}>
       <Navbar />
@@ -107,9 +117,14 @@ const Tenancies = () => {
                     Started: {new Date(tenancy.startDate).toLocaleDateString()}
                   </div>
                 </div>
-                <span style={{ padding: '4px 8px', backgroundColor: '#e8f8f5', color: '#2ecc71', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>
-                  {tenancy.status.toUpperCase()}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ padding: '4px 8px', backgroundColor: '#e8f8f5', color: '#2ecc71', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>
+                    {tenancy.status.toUpperCase()}
+                  </span>
+                  <button onClick={() => handleDelete(tenancy._id)} style={{ padding: '4px 8px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
             {tenancies.length === 0 && <p style={{ color: '#7f8c8d' }}>No tenancies found. Create one above!</p>}
