@@ -4,7 +4,7 @@ const Tenant = require('../models/Tenant');
 
 exports.createTenancy = async (req, res) => {
   try {
-    const { tenantId, unitId, startDate } = req.body;
+  const { tenantId, unitId, startDate, endDate, rentAmount, securityDeposit } = req.body;
 
     if (!tenantId || !unitId || !startDate) {
       return res.status(400).json({ message: 'Tenant, Unit, and Start Date are required' });
@@ -26,6 +26,9 @@ exports.createTenancy = async (req, res) => {
       tenantId,
       unitId,
       startDate,
+      endDate,
+      rentAmount,
+      securityDeposit,
       organizationId: req.user.organizationId
     });
 

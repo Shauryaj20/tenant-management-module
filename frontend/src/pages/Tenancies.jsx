@@ -6,8 +6,14 @@ const Tenancies = () => {
   const [tenancies, setTenancies] = useState([]);
   const [units, setUnits] = useState([]);
   const [tenants, setTenants] = useState([]);
-  const [formData, setFormData] = useState({ tenantId: '', unitId: '', startDate: '' });
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({ 
+    tenantId: '', 
+    unitId: '', 
+    startDate: '', 
+    endDate: '', 
+    rentAmount: '', 
+    securityDeposit: '' 
+});  const [error, setError] = useState('');
 
   const fetchData = async () => {
     try {
@@ -43,7 +49,7 @@ const Tenancies = () => {
     try {
       await api.post('/tenancies', formData);
       
-      setFormData(prev => ({ ...prev, startDate: '' })); 
+      setFormData(prev => ({ ...prev, startDate: '', endDate: '', rentAmount: '', securityDeposit: '' })); 
       fetchData(); 
     } catch (err) {
       setError(err.response?.data?.message || 'Error creating tenancy');
@@ -95,7 +101,18 @@ const Tenancies = () => {
               <label style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>Start Date</label>
               <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} required style={{ padding: '8px' }} />
             </div>
-
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <label style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>End Date</label>
+              <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} required />
+            </div>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <label style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>Rent Amount ($)</label>
+              <input type="number" name="rentAmount" value={formData.rentAmount} onChange={handleChange} placeholder="e.g., 1500" required />
+            </div>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <label style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>Security Deposit ($)</label>
+              <input type="number" name="securityDeposit" value={formData.securityDeposit} onChange={handleChange} placeholder="e.g., 1500" required />
+            </div>
             <button type="submit" disabled={units.length === 0 || tenants.length === 0} style={{ padding: '8px 16px', backgroundColor: '#2ecc71', color: 'white', border: 'none', borderRadius: '4px', cursor: (units.length === 0 || tenants.length === 0) ? 'not-allowed' : 'pointer', marginTop: '18px' }}>
               Assign Tenant
             </button>
@@ -114,7 +131,11 @@ const Tenancies = () => {
                   <span style={{ margin: '0 10px', color: '#7f8c8d' }}>renting</span> 
                   <strong>Unit {tenancy.unitId?.unitNumber || 'Unknown Unit'}</strong>
                   <div style={{ fontSize: '14px', color: '#7f8c8d', marginTop: '5px' }}>
-                    Started: {new Date(tenancy.startDate).toLocaleDateString()}
+                    {tenancy.startDate ? `Started: ${new Date(tenancy.startDate).toLocaleDateString()}`: 'Start Date: Not Set'}
+                    {tenancy.endDate ? ` | Ends: ${new Date(tenancy.endDate).toLocaleDateString()}`: ' | End Date: Not Set'}
+                    <br />
+                    {tenancy.rentAmount ? `Rent: $${tenancy.rentAmount} /mo`: 'Rent: Not Mentioned'} 
+                    {tenancy.securityDeposit ? ` | Deposit: $${tenancy.securityDeposit}`: ' | Deposit: Not Mentioned'}
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
