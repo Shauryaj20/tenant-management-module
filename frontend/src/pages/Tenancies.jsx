@@ -48,18 +48,33 @@ const Tenancies = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); 
+    if (formData.endDate) {
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);      
+      if (end < start) {
+        setError("Validation Error: Lease end date cannot be earlier than the start date.");
+        return; 
+      }
+    }
     try {
       if (editingId) {
         await api.put(`/tenancies/${editingId}`, formData);
-        setEditingId(null); 
+        setEditingId(null);
       } else {
         await api.post('/tenancies', formData);
       }
-      fetchData();
-      setFormData({ tenantId: '', unitId: '', startDate: '', endDate: '', rentAmount: '', securityDeposit: '' });
+      fetchData();   
+      setFormData({ 
+        tenantId: '', 
+        unitId: '', 
+        startDate: '', 
+        endDate: '', 
+        rentAmount: '', 
+        securityDeposit: '' 
+      });
     } catch (err) {
       console.error(err);
-      setError('Error saving tenancy');
+      setError(err.response?.data?.message || 'Error saving tenancy');
     }
   };
 

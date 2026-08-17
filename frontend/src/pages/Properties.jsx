@@ -43,15 +43,14 @@ const Properties = () => {
     }
   };
   const handleDelete = async (id) => {
-    const isConfirmed = window.confirm(
-      "Are you sure you want to delete this property?\n\nWARNING: This will permanently delete ALL Units and Active Leases associated with this property!"
-    );
-    if (!isConfirmed) return;
-    try {
-      await api.delete(`/properties/${id}`);
-      fetchProperties(); 
-    } catch (err) {
-      setError(err.response?.data?.message || 'Error deleting property');
+    if (window.confirm('Are you sure you want to delete this property?')) {
+      try {
+        await api.delete(`/properties/${id}`);
+        fetchProperties(); 
+      } catch (err) {
+        console.error(err);
+        alert(err.response?.data?.message || 'Error deleting property');
+      }
     }
   };
   const handleEditClick = (propertyData) => {
