@@ -53,3 +53,14 @@ exports.deleteProperty = async (req, res) => {
     res.status(500).json({ message: 'Server error deleting property' });
   }
 };
+
+exports.updateProperty = async (req, res) => {
+  try {
+    const updatedProperty = await Property.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!updatedProperty) return res.status(404).json({ message: 'Property not found' });
+    res.status(200).json(updatedProperty);
+  } catch (error) {
+    console.error('Update Property Error:', error);
+    res.status(500).json({ message: 'Server error updating property' });
+  }
+};

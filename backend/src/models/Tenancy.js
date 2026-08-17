@@ -36,8 +36,8 @@ const tenancySchema = new mongoose.Schema({
   // ------------------------
   status: {
     type: String,
-    enum: ['Active', 'Terminated', 'Expired'],
-    default: 'Active'
+    enum: ['active', 'terminated', 'expired'],
+    default: 'active'
   }
 }, { timestamps: true });
 

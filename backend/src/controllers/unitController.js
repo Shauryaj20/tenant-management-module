@@ -58,3 +58,13 @@ exports.deleteUnit = async (req, res) => {
     res.status(500).json({ message: 'Server error deleting unit' });
   }
 };
+exports.updateUnit = async (req, res) => {
+  try {
+    const updatedUnit = await Unit.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!updatedUnit) return res.status(404).json({ message: 'Unit not found' });
+    res.status(200).json(updatedUnit);
+  } catch (error) {
+    console.error('Update Unit Error:', error);
+    res.status(500).json({ message: 'Server error updating unit' });
+  }
+};

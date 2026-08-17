@@ -8,5 +8,5 @@ router.use(authMiddleware);
 router.post('/', tenancyController.createTenancy); 
 router.get('/', tenancyController.getTenancies);   
 router.delete('/:id', tenancyController.deleteTenancy);
-
+router.put('/:id', tenancyController.updateTenancy);
 module.exports = router;

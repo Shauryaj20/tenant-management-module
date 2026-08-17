@@ -49,3 +49,13 @@ exports.deleteTenant = async (req, res) => {
     res.status(500).json({ message: 'Server error deleting tenant' });
   }
 };
+exports.updateTenant = async (req, res) => {
+  try {
+    const updatedTenant = await Tenant.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!updatedTenant) return res.status(404).json({ message: 'Tenant not found' });
+    res.status(200).json(updatedTenant);
+  } catch (error) {
+    console.error('Update Tenant Error:', error);
+    res.status(500).json({ message: 'Server error updating tenant' });
+  }
+};

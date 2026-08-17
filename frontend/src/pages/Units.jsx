@@ -7,6 +7,7 @@ const Units = () => {
   const [properties, setProperties] = useState([]);
   const [formData, setFormData] = useState({ unitNumber: '', rentAmount: '', propertyId: '' });
   const [error, setError] = useState('');
+  const [editingId, setEditingId] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -35,15 +36,26 @@ const Units = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
+  e.preventDefault();
+  try {
+    if (editingId) {
+      await api.put(`/units/${editingId}`, formData);
+      setEditingId(null);
+    } else {
       await api.post('/units', formData);
-      setFormData({ unitNumber: '', rentAmount: '', propertyId: properties.length > 0 ? properties[0]._id : '' });
-      fetchData(); 
-    } catch (err) {
-      setError(err.response?.data?.message || 'Error adding unit');
     }
-  };
+    fetchData();
+    setFormData({ 
+      unitNumber: '', 
+      rentAmount: '', 
+      propertyId: properties.length > 0 ? properties[0]._id : '' 
+    });
+    
+  } catch (err) {
+    console.error('Submit Error:', err);
+    setError(err.response?.data?.message || 'Error saving unit');
+  }
+};
 
   const handleDelete = async (id) => {
     const isConfirmed = window.confirm(
@@ -57,6 +69,17 @@ const Units = () => {
       setError(err.response?.data?.message || 'Error deleting unit');
     }
   };
+  const handleEditClick = (unit) => {
+  setEditingId(unit._id);
+  // Populate your specific form fields
+  setFormData({ 
+    unitNumber: unit.unitNumber, 
+    rentAmount: unit.rentAmount, 
+    propertyId: unit.propertyId._id || unit.propertyId 
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div style={{ backgroundColor: '#f4f6f8', minHeight: '100vh' }}>
       <Navbar />
@@ -80,9 +103,28 @@ const Units = () => {
                 ))
               )}
             </select>
-            <button type="submit" disabled={properties.length === 0} style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: properties.length === 0 ? 'not-allowed' : 'pointer' }}>
-              Add Unit
-            </button>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button 
+                type="submit" 
+                disabled={properties.length === 0} 
+                style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: properties.length === 0 ? 'not-allowed' : 'pointer' }}
+              >
+                {editingId ? 'Update Unit' : 'Add Unit'}
+              </button>
+              {editingId && (
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setEditingId(null);
+                    setFormData({ unitNumber: '', rentAmount: '', propertyId: properties.length > 0 ? properties[0]._id : '' });
+                  }} 
+                  style={{ padding: '8px 16px', backgroundColor: '#95a5a6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </div>
+            
           </form>
           {properties.length === 0 && <p style={{ color: '#e74c3c', fontSize: '14px', marginTop: '10px' }}>You must create a property before you can add a unit.</p>}
         </div>
@@ -106,6 +148,9 @@ const Units = () => {
                   <button onClick={() => handleDelete(unit._id)} style={{ padding: '4px 8px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
                     Delete
                   </button>
+                  <button onClick={() => handleEditClick(unit)} style={{ backgroundColor: '#3498db', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', marginRight: '10px' }}>
+                    Edit
+                  </button>                  
                 </div>
               </li>
             ))}

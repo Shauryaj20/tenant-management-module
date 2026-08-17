@@ -5,7 +5,8 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 router.use(authMiddleware);
 
-router.post('/', propertyController.createProperty); // POST /properties
-router.get('/', propertyController.getProperties);   // GET /properties
-router.delete('/:id', propertyController.deleteProperty); //DELETE /properties
+router.post('/', propertyController.createProperty); 
+router.get('/', propertyController.getProperties);   
+router.delete('/:id', propertyController.deleteProperty); 
+router.put('/:id', propertyController.updateProperty);
 module.exports = router;

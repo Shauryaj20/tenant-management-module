@@ -66,3 +66,30 @@ exports.deleteTenancy = async (req, res) => {
     res.status(500).json({ message: 'Server error deleting tenancy' });
   }
 };
+
+exports.updateTenancy = async (req, res) => {
+  try {
+    const { startDate, endDate, rentAmount, securityDeposit, status } = req.body;
+
+    const updatedTenancy = await Tenancy.findByIdAndUpdate(
+      req.params.id,
+      { 
+        startDate, 
+        endDate, 
+        rentAmount, 
+        securityDeposit, 
+        status 
+      },
+      { new: true, runValidators: true } 
+    );
+
+    if (!updatedTenancy) {
+      return res.status(404).json({ message: 'Tenancy not found' });
+    }
+
+    res.status(200).json(updatedTenancy);
+  } catch (error) {
+    console.error('Update Tenancy Error:', error);
+    res.status(500).json({ message: 'Server error updating tenancy' });
+  }
+};

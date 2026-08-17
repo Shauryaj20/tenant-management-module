@@ -13,7 +13,9 @@ const Tenancies = () => {
     endDate: '', 
     rentAmount: '', 
     securityDeposit: '' 
-});  const [error, setError] = useState('');
+  });
+  const [editingId, setEditingId] = useState(null);
+  const [error, setError] = useState('');
 
   const fetchData = async () => {
     try {
@@ -47,12 +49,17 @@ const Tenancies = () => {
     e.preventDefault();
     setError(''); 
     try {
-      await api.post('/tenancies', formData);
-      
-      setFormData(prev => ({ ...prev, startDate: '', endDate: '', rentAmount: '', securityDeposit: '' })); 
-      fetchData(); 
+      if (editingId) {
+        await api.put(`/tenancies/${editingId}`, formData);
+        setEditingId(null); 
+      } else {
+        await api.post('/tenancies', formData);
+      }
+      fetchData();
+      setFormData({ tenantId: '', unitId: '', startDate: '', endDate: '', rentAmount: '', securityDeposit: '' });
     } catch (err) {
-      setError(err.response?.data?.message || 'Error creating tenancy');
+      console.error(err);
+      setError('Error saving tenancy');
     }
   };
 
@@ -66,6 +73,26 @@ const Tenancies = () => {
       setError(err.response?.data?.message || 'Error deleting tenancy');
     }
   };
+
+  const handleEditClick = (tenancy) => {
+  setEditingId(tenancy._id);
+  
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toISOString().split('T')[0];
+  };
+
+  setFormData({
+    tenantId: tenancy.tenantId._id || tenancy.tenantId, 
+    unitId: tenancy.unitId._id || tenancy.unitId,
+    startDate: formatDate(tenancy.startDate),
+    endDate: formatDate(tenancy.endDate),
+    rentAmount: tenancy.rentAmount || '',
+    securityDeposit: tenancy.securityDeposit || ''
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
   return (
     <div style={{ backgroundColor: '#f4f6f8', minHeight: '100vh' }}>
       <Navbar />
@@ -113,9 +140,21 @@ const Tenancies = () => {
               <label style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>Security Deposit ($)</label>
               <input type="number" name="securityDeposit" value={formData.securityDeposit} onChange={handleChange} placeholder="e.g., 1500" required />
             </div>
-            <button type="submit" disabled={units.length === 0 || tenants.length === 0} style={{ padding: '8px 16px', backgroundColor: '#2ecc71', color: 'white', border: 'none', borderRadius: '4px', cursor: (units.length === 0 || tenants.length === 0) ? 'not-allowed' : 'pointer', marginTop: '18px' }}>
-              Assign Tenant
+            <button type="submit" className="btn-success">
+              {editingId ? 'Update Tenancy' : 'Assign Tenant'}
             </button>
+            {editingId && (
+              <button 
+                type="button" 
+                onClick={() => {
+                  setEditingId(null);
+                  setFormData({ tenantId: '', unitId: '', startDate: '', endDate: '', rentAmount: '', securityDeposit: '' });
+                }} 
+                style={{ marginLeft: '10px', backgroundColor: '#95a5a6', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+              >
+                Cancel Edit
+              </button>
+            )}
           </form>
           {(units.length === 0 || tenants.length === 0) && <p style={{ color: '#e74c3c', fontSize: '14px', marginTop: '10px' }}>You must have at least one Unit and one Tenant to create a lease.</p>}
         </div>
@@ -144,6 +183,9 @@ const Tenancies = () => {
                   </span>
                   <button onClick={() => handleDelete(tenancy._id)} style={{ padding: '4px 8px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
                     Delete
+                  </button>
+                  <button onClick={() => handleEditClick(tenancy)} style={{ padding: '4px 8px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                    Edit
                   </button>
                 </div>
               </li>

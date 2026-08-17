@@ -8,6 +8,7 @@ const Tenants = () => {
   const [documentFile, setDocumentFile] = useState(null);
   const [error, setError] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
   const fetchTenants = async () => {
     try {
@@ -33,35 +34,18 @@ const Tenants = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsUploading(true);
-    setError('');
-
     try {
-      let documentUrl = '';
-
-      if (documentFile) {
-        const uploadData = new FormData();
-        uploadData.append('document', documentFile); 
-
-        const uploadRes = await api.post('/upload', uploadData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        documentUrl = uploadRes.data.fileUrl;
+      if (editingId) {
+        await api.put(`/tenants/${editingId}`, formData);
+        setEditingId(null);
+      } else {
+        await api.post('/tenants', formData);
       }
-      await api.post('/tenants', {
-        ...formData,
-        documentUrl
-      });
-
-      setFormData({ name: '', email: '', phone: '' });
-      setDocumentFile(null);
-      document.getElementById('file-upload').value = ''; 
       fetchTenants();
-
+      setFormData({ name: '', email: '', phone: '' }); 
     } catch (err) {
-      setError(err.response?.data?.message || 'Error adding tenant');
-    } finally {
-      setIsUploading(false);
+      console.error(err);
+      setError('Error saving tenant');
     }
   };
 
@@ -76,6 +60,16 @@ const Tenants = () => {
     } catch (err) {
       setError(err.response?.data?.message || 'Error deleting tenant');
     }
+  };
+  const handleEditClick = (tenant) => {
+    setEditingId(tenant._id);
+    setFormData({ 
+      name: tenant.name, 
+      email: tenant.email,
+      phone: tenant.phone,
+      documentUrl: tenant.documentUrl || '' 
+    }); 
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -98,11 +92,18 @@ const Tenants = () => {
             
             <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
               <label style={{ fontWeight: 'bold', color: '#34495e' }}>ID Proof / Document:</label>
-              <input type="file" id="file-upload" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" style={{ padding: '5px' }} />
-              
-              <button type="submit" disabled={isUploading} style={{ padding: '8px 24px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: isUploading ? 'not-allowed' : 'pointer', marginLeft: 'auto' }}>
-                {isUploading ? 'Uploading...' : 'Add Tenant'}
+              <input type="file" id="file-upload" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" style={{ padding: '5px' }} />              
+            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+              <button type="submit" style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                {editingId ? 'Update Tenant' : 'Add Tenant'}
               </button>
+              {editingId && (
+                <button type="button" onClick={() => {setEditingId(null); setFormData({ name: '', email: '', phone: '' });}}
+                style={{ padding: '8px 16px', backgroundColor: '#95a5a6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                  Cancel Edit
+                </button>
+              )}
+            </div>
             </div>
           </form>
         </div>
@@ -128,6 +129,9 @@ const Tenants = () => {
                 )}
                 <button onClick={() => handleDelete(tenant._id)} style={{ padding: '4px 8px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
                   Delete
+                </button>
+                <button onClick={() => handleEditClick(tenant)} style={{ backgroundColor: '#3498db', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', marginRight: '10px' }}>
+                  Edit
                 </button>
               </li>
             ))}
